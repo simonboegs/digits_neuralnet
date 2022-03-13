@@ -4,6 +4,8 @@ from activation_functions import relu, relu_prime, softmax
 
 class Network:
     def __init__(self, inputLen, shape, layers=None):
+        self.learning_rate = .2
+        self.shape = shape
         if layers != None:
             self.layers = layers
         else:
@@ -53,3 +55,35 @@ class Network:
                 layer.a = relu(layer.z)
             prev_a = layer.a
 
+    def calc_errors(self, y):
+        errors = [None] * len(self.layers)
+        errors[-1] = self.layers[-1].a - y
+        for i in range(len(self.layers)-2,-1,-1):
+            errors[i] = np.multiply(relu_prime(self.layers[i].z), np.matmul(np.transpose(self.layers[i+1].W), errors[i+1]))
+        return errors
+
+    def calc_gradients(self, x, y):
+        errors = self.calc_errors(y)
+        b_grads = [None] * len(errors)
+        W_grads = [None] * len(errors)
+        prev_a = x
+        for i in range(1,len(errors)):
+            b_grads[i] = errors[i]
+            W_grads[i] = np.matmult(prev_a, np.transpose(errors[i]))
+        return [W_grads, b_grads]
+    
+    def calc_mean_gradients(self, x_V, y_V):
+        W_grads_total, b_grads_total = self.calc_gradients(x_V[0], y_V[0])
+        for i in range(1,len(x_V)):
+            W_grads, b_grads = self.calc_gradients(x_V[i], y_V[i])
+            for j in range(len(W_grads)):
+                W_grads_total[j] += W_grads[j]
+                b_grads_total[j] += b_grads[j]
+        for j in range(len(W_grads_total)):
+            np.divide(W_grads_total[j], len(x_V))
+            np.divide(b_grads_total[j], len(x_V))
+        return [W_grads_total, b_grads_total]
+
+
+    def update_weights_biases(self, mean_gradients): 
+        pass 
