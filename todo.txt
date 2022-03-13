@@ -1,0 +1,22 @@
+
+wow i just deleted everything in this file. nice.
+
+backprop equations for:
+	activation (hidden layer): doesn't matter
+	activation (last layer): soft max
+	cost function: cross-entropy
+https://towardsdatascience.com/deriving-backpropagation-with-cross-entropy-loss-d24811edeaf9
+
+wed
+[x] write test file for activation functions
+[x] write tests for init functions
+
+thurs
+[x] implement forward prop
+
+fri
+[x] verify forward prop
+
+sat
+[ ] start on backprop
+
