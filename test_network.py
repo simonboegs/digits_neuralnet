@@ -29,5 +29,6 @@ network.layers[1].printLayer()
 y = np.zeros(3)
 y[0] = 1
 print("calc_errors, y =", y)
-errors = network.calc_errors(y)
-print(errors)
+
+
+print("calc_mean_errors")

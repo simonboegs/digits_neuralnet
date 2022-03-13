@@ -64,12 +64,17 @@ class Network:
 
     def calc_gradients(self, x, y):
         errors = self.calc_errors(y)
+        print("errors",errors)
         b_grads = [None] * len(errors)
         W_grads = [None] * len(errors)
         prev_a = x
-        for i in range(1,len(errors)):
+        for i in range(len(errors)):
             b_grads[i] = errors[i]
-            W_grads[i] = np.matmult(prev_a, np.transpose(errors[i]))
+            prev_a_matrix = np.transpose(np.array([prev_a]))
+            error_matrix = np.array([errors[i]])
+            result = np.matmul(prev_a_matrix, error_matrix)
+            W_grads[i] = result.T
+            prev_a = self.layers[i].a
         return [W_grads, b_grads]
     
     def calc_mean_gradients(self, x_V, y_V):
@@ -87,3 +92,5 @@ class Network:
 
     def update_weights_biases(self, mean_gradients): 
         pass 
+
+

@@ -18,5 +18,14 @@ fri
 [x] verify forward prop
 
 sat
-[ ] start on backprop
+[x] start on backprop
+[x]		implemented errors
+[x]		verified errors
+[x]		implemented gradient and mean_gradient calculations
+
+sun
+[x] verify gradient
+[ ] verify mean_gradient
+[ ] implement update_weights_biases
+[ ] verify update_weights_biases
 
