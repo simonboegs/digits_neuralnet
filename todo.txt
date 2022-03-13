@@ -24,8 +24,7 @@ sat
 [x]		implemented gradient and mean_gradient calculations
 
 sun
-[x] verify gradient
-[ ] verify mean_gradient
-[ ] implement update_weights_biases
-[ ] verify update_weights_biases
-
+- implemented train_mini_batch (not tested yet), includes
+	- calc gradient
+	- calc mean gradient
+	- update weights and biases

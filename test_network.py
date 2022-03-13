@@ -28,7 +28,5 @@ network.layers[1].printLayer()
 
 y = np.zeros(3)
 y[0] = 1
-print("calc_errors, y =", y)
 
-
-print("calc_mean_errors")
+network.train_mini_batch([np.zeros(2),np.zeros(3),np.zeros(4)],[np.ones(2),np.ones(3),np.ones(4)])

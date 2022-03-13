@@ -76,21 +76,38 @@ class Network:
             W_grads[i] = result.T
             prev_a = self.layers[i].a
         return [W_grads, b_grads]
-    
-    def calc_mean_gradients(self, x_V, y_V):
-        W_grads_total, b_grads_total = self.calc_gradients(x_V[0], y_V[0])
-        for i in range(1,len(x_V)):
-            W_grads, b_grads = self.calc_gradients(x_V[i], y_V[i])
-            for j in range(len(W_grads)):
-                W_grads_total[j] += W_grads[j]
-                b_grads_total[j] += b_grads[j]
-        for j in range(len(W_grads_total)):
-            np.divide(W_grads_total[j], len(x_V))
-            np.divide(b_grads_total[j], len(x_V))
-        return [W_grads_total, b_grads_total]
 
+    def update_weights_biases(self, W_grads, b_grads):
+        for l in range(len(self.layers)):
+            W_grad_adj = np.multiply(self.learning_rate, W_grads[l])
+            b_grad_adj = np.multiply(self.learning_rate, b_grads[l])
+            self.layers[i].W = np.subtract(self.layers[i].W, W_grad_adj)
+            self.layers[i].b = np.subtract(self.layers[i].b, b_grad_adj)
+            #z and a are never being reset - not technically a problem, but might be confusing when printing
 
-    def update_weights_biases(self, mean_gradients): 
-        pass 
-
+    def train_mini_batch(self, x_V, y_V):
+        W_grads_total = None
+        b_grads_total = None
+        for i in range(len(x_V)):
+            x = x_V[i]
+            y = y_V[i]
+            self.forward_prop(x) 
+            W_grads, b_grads = self.calc_gradients(x, y)
+            #init total gradients
+            if W_grads_total == None:
+                W_grads_total = W_grads.copy()
+                b_grads_total = b_grads.copy()
+            #add to total gradients
+            else:
+                for l in range(len(self.layers)):
+                    W_grads_total[l] = np.add(W_grads_total[l], W_grads[l])
+                    b_grads_total[l] = np.add(b_grads_total[l], b_grads[l])
+        #calculate mean grads
+        W_grads_mean = [None] * len(self.layers)
+        b_grads_mean = [None] * len(self.layers)
+        for l in range(len(self.layers)):
+            W_grads_mean[l] = np.divide(W_grads_total[l], len(x_V))
+            b_grads_mean[l] = np.divide(b_grads_total[l], len(x_V))
+        
+        self.update_weights_biases(W_grads_mean, b_grads_mean)
 
