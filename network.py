@@ -1,6 +1,6 @@
 import numpy as np
 from layer import Layer
-from activation_functions import relu, relu_prime, softmax
+from functions import relu, relu_prime, softmax, cross_entropy
 
 class Network:
     def __init__(self, inputLen, shape, layers=None):
@@ -81,11 +81,19 @@ class Network:
         for l in range(len(self.layers)):
             W_grad_adj = np.multiply(self.learning_rate, W_grads[l])
             b_grad_adj = np.multiply(self.learning_rate, b_grads[l])
-            self.layers[i].W = np.subtract(self.layers[i].W, W_grad_adj)
-            self.layers[i].b = np.subtract(self.layers[i].b, b_grad_adj)
+            self.layers[l].W = np.subtract(self.layers[l].W, W_grad_adj)
+            self.layers[l].b = np.subtract(self.layers[l].b, b_grad_adj)
             #z and a are never being reset - not technically a problem, but might be confusing when printing
 
+    def valid_inputs(self, x_V, y_V):
+        if len(x_V) == len(y_V):
+            return True
+        print("x_V and y_V have unequal lengths")
+        return False
+
     def train_mini_batch(self, x_V, y_V):
+        if not self.valid_inputs(x_V, y_V):
+            return
         W_grads_total = None
         b_grads_total = None
         for i in range(len(x_V)):
@@ -110,4 +118,16 @@ class Network:
             b_grads_mean[l] = np.divide(b_grads_total[l], len(x_V))
         
         self.update_weights_biases(W_grads_mean, b_grads_mean)
+
+    def test(self, x_V, y_V):
+        if not self.valid_inputs(x_V, y_V):
+            return
+        for i in range(len(x_V)):
+            self.forward_prop(x_V[i])
+            a = self.layers[-1].a
+            print("network output:",a)
+            print("target output:",y_V[i])
+            cost = cross_entropy(a, y_V[i])
+            print("cost:",cost)
+
 
