@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from functions import relu, relu_prime, softmax, cross_entropy
+from functions import relu, relu_prime, softmax_niave, softmax, cross_entropy
 
 def test_relu():
     z = np.array([-2, -1, -.5, 0, .5, 1, 2, 10],dtype=float)
@@ -29,8 +29,8 @@ def test_relu_prime():
 def test_softmax():
     z = np.array([-2,-1,0,1,2], dtype=float)
     ans = softmax(z)
-    assert np.sum(ans) == 1
-    assert ans[-1] > ans[0]
+    ans_niave = softmax_niave(z)
+    print(ans, ans_niave)
 
 def test_cross_entropy():
     y = np.array([1, 0, 0])
@@ -46,4 +46,4 @@ def test_cross_entropy():
     a = np.array([.05, .9, .05])
     print(cross_entropy(a, y))
 
-test_cross_entropy()
+test_softmax()

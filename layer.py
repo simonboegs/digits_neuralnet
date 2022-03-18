@@ -9,7 +9,7 @@ class Layer:
 
     def printLayer(self):
         print('LAYER')
-        print('W', self.W)
+        print('W', self.W.shape, self.W)
         print('b', self.b)
         print('z', self.z)
         print('a', self.a)

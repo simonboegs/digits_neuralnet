@@ -15,9 +15,13 @@ def relu_prime(z):
             ans[i] = 0
     return ans
 
-def softmax(z):
+def softmax_niave(z):
     e = np.exp(z)
     return e / e.sum()
+
+def softmax(z):
+    e = np.exp(z - np.max(z))
+    return e / np.sum(e)
 
 def cross_entropy(a, y):
     return -1 * np.dot(np.log(a), y)

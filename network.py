@@ -4,7 +4,7 @@ from functions import relu, relu_prime, softmax, cross_entropy
 
 class Network:
     def __init__(self, inputLen, shape, layers=None):
-        self.learning_rate = .2
+        self.learning_rate = .1
         self.shape = shape
         if layers != None:
             self.layers = layers
@@ -54,6 +54,7 @@ class Network:
             else:   
                 layer.a = relu(layer.z)
             prev_a = layer.a
+            self.layers[i].printLayer()
 
     def calc_errors(self, y):
         errors = [None] * len(self.layers)
@@ -64,7 +65,6 @@ class Network:
 
     def calc_gradients(self, x, y):
         errors = self.calc_errors(y)
-        print("errors",errors)
         b_grads = [None] * len(errors)
         W_grads = [None] * len(errors)
         prev_a = x
@@ -101,7 +101,8 @@ class Network:
             x = x_V[i]
             y = y_V[i]
             self.forward_prop(x) 
-            total_cost += cross_entropy(self.layers[-1].a, y)
+            cost = cross_entropy(self.layers[-1].a, y)
+            total_cost += cost
             W_grads, b_grads = self.calc_gradients(x, y)
             #init total gradients
             if W_grads_total == None:
@@ -124,18 +125,18 @@ class Network:
         mean_cost = total_cost / len(x_V)
         return mean_cost
 
-    def train(self, x_V_all, y_V_all, epochs, batch_size=100) :
+    def train(self, x_V_all, y_V_all, epochs, batch_size=500):
         if not self.valid_inputs(x_V_all, y_V_all):
             return
         #split into mini-batches
-        x_batches = np.array_split(x_V_all, np.ceil(len(x_V_all)/batch_size))
-        y_batches = np.array_split(y_V_all, batch_size)
-        print("x_batches",x_batches)
-        print("y_batches",y_batches)
+        batch_num = np.ceil(len(x_V_all)/batch_size)
+        x_batches = np.array_split(x_V_all, batch_num)
+        y_batches = np.array_split(y_V_all, batch_num)
         batch_mean_costs = []
         for i in range(epochs):
             print("EPOCH", i)
             for j in range(len(x_batches)):
+                print("BATCH",j)
                 batch_mean_cost = self.train_batch(x_batches[j], y_batches[j])
                 batch_mean_costs.append(batch_mean_cost) 
         return batch_mean_costs
@@ -146,9 +147,6 @@ class Network:
         for i in range(len(x_V)):
             self.forward_prop(x_V[i])
             a = self.layers[-1].a
-            print("network output:",a)
-            print("target output:",y_V[i])
             cost = cross_entropy(a, y_V[i])
-            print("cost:",cost)
 
 
