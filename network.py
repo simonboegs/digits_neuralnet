@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from layer import Layer
 from functions import relu, relu_prime, softmax, cross_entropy
@@ -20,11 +21,35 @@ class Network:
 
                 W = self.init_weight_M(prevN, N)
                 b = self.init_bias_V(N)
+
+                self.layers.append(Layer(N,W,b))
+
+"""
+    def __init__(self, input_length, learning_rate=.1, *layers, **kwargs):
+        self.learning_rate = learning_rate
+        self.input_length = input_length
+        if len(layers) != 0:
+            self.layers = layers
+            self.shape = [len(layer.a) for layer in self.layers]
+        elif 'filename' in kwargs:
+            with open(filename, 'r') as f:
+                data = json.load(f)
+                print(data)
+        else:
+            self.shape = kwargs.shape
+            self.layers = [None] * len(shape) 
+            prevN = self.input_length 
+            for l in range(len(shape)):
+                N = self.shape[l] 
+                
+                W = self.init_weight_M(prevN, N)
+                b = self.init_bias_V(N)
                 a = self.init_activation_V(N)
                 z = self.init_z_V(N)
 
-                self.layers.append(Layer(W,b,z,a))
-
+                prevN = N
+                self.layers[l] = Layer(W,b,z,a)
+"""
     #INITS
     def init_weight_M(self, prevN, N):
         W = np.random.rand(N, prevN)
@@ -140,6 +165,18 @@ class Network:
                 batch_mean_cost = self.train_batch(x_batches[j], y_batches[j])
                 batch_mean_costs.append(batch_mean_cost) 
         return batch_mean_costs
+    
+    def save(self, filename):
+        layers = [None] * len(self.layers)
+        for l in range(len(self.layers)):
+            layers[l] = {
+                    'W': self.layers[l].W.tolist(),
+                    'b': self.layers[l].b.tolist()
+                    }
+        json_obj = {input_length: self.input_length, shape: self.shape, layers: layers}
+        with open(filename,'w') as f:
+            json.dump(json_obj, f)
+        print('network saved to file',filename)
 
     def test(self, x_V, y_V):
         if not self.valid_inputs(x_V, y_V):
@@ -149,4 +186,9 @@ class Network:
             a = self.layers[-1].a
             cost = cross_entropy(a, y_V[i])
 
-
+    def printNetwork(self):
+        print('NETWORK')
+        print('learning rate',learning_rate)
+        print('shape',shape)
+        for l in range(len(self.layers)):
+            self.layers[l].printLayer()

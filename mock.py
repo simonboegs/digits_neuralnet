@@ -2,6 +2,8 @@ import numpy as np
 from network import Network
 from layer import Layer
 
+
+
 mock_W_0 = np.array([[0.23464666, 0.55318249, 0.07024911],
  [0.1092703, 0.86004429, 0.10572249],
  [0.99818617, 0.12326535, 0.2342077]])
@@ -11,11 +13,9 @@ mock_W_1 = np.array([[0.6096354, 0.13629155, 0.1139385],
  [0.07953902, 0.21710172, 0.19525503]])
 
 mock_b = np.array([0,0,0], dtype=float)
-mock_z = np.array([0,0,0], dtype=float)
-mock_a = np.array([0,0,0], dtype=float)
 
 
-layer0 = Layer(mock_W_0, mock_b, mock_z, mock_a)
-layer1 = Layer(mock_W_1, mock_b, mock_z, mock_a)
+layer0 = Layer(3, mock_W_0, mock_b)
+layer1 = Layer(3, mock_W_1, mock_b)
 shape = [3, 3] #3 neurons first layer, 3 neurons second layer
 mock_network_0 = Network(3, shape, [layer0,layer1]) 
