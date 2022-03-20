@@ -17,5 +17,4 @@ mock_b = np.array([0,0,0], dtype=float)
 
 layer0 = Layer(3, mock_W_0, mock_b)
 layer1 = Layer(3, mock_W_1, mock_b)
-shape = [3, 3] #3 neurons first layer, 3 neurons second layer
-mock_network_0 = Network(3, shape, [layer0,layer1]) 
+mock_network_0 = Network(layer0, layer1, learning_rate=.1, input_length=3)

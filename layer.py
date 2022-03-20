@@ -1,15 +1,15 @@
 import numpy as np
 
 class Layer:
-    def __init__(self, N, weightMatrix, biasVector):
+    def __init__(self, N, weight_matrix, bias_vector):
         self.N = N
-        self.W = weightMatrix
-        self.b = biasVector
+        self.W = weight_matrix
+        self.b = bias_vector
         self.a = np.zeros(N)
         self.z = np.zeros(N) 
 
     def printLayer(self):
-        print('LAYER N='+str(N))
+        print('LAYER N='+str(self.N))
         print('W', self.W.shape, self.W)
         print('b', self.b)
         print('z', self.z)

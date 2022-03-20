@@ -4,52 +4,36 @@ from layer import Layer
 from functions import relu, relu_prime, softmax, cross_entropy
 
 class Network:
-    def __init__(self, inputLen, shape, layers=None):
-        self.learning_rate = .1
-        self.shape = shape
-        if layers != None:
-            self.layers = layers
-        else:
-            self.layers = []
-
-            for i in range(len(shape)):
-                if i == 0:
-                    prevN = inputLen
-                else:
-                    prevN = shape[i-1]
-                N = shape[i]
-
-                W = self.init_weight_M(prevN, N)
-                b = self.init_bias_V(N)
-
-                self.layers.append(Layer(N,W,b))
-
-"""
-    def __init__(self, input_length, learning_rate=.1, *layers, **kwargs):
-        self.learning_rate = learning_rate
-        self.input_length = input_length
+    def __init__(self, *layers, **kwargs):
         if len(layers) != 0:
+            self.learning_rate = kwargs['learning_rate']
+            self.input_length = kwargs['input_length']
             self.layers = layers
-            self.shape = [len(layer.a) for layer in self.layers]
-        elif 'filename' in kwargs:
-            with open(filename, 'r') as f:
-                data = json.load(f)
-                print(data)
-        else:
-            self.shape = kwargs.shape
-            self.layers = [None] * len(shape) 
-            prevN = self.input_length 
-            for l in range(len(shape)):
-                N = self.shape[l] 
-                
-                W = self.init_weight_M(prevN, N)
-                b = self.init_bias_V(N)
-                a = self.init_activation_V(N)
-                z = self.init_z_V(N)
+            return
+        if 'filename' in kwargs:
+            with open(kwargs['filename'], 'r') as f:
+                network_data = json.load(f)
+                self.learning_rate = network_data['learning_rate']
+                self.input_length = network_data['input_length']
+                self.layers = [None] * len(network_data['layers'])
+                for l, layer in enumerate(network_data['layers']):
+                    N = layer['N']
+                    W = np.asarray(layer['W'])
+                    b = np.asarray(layer['b'])
+                    self.layers[l] = Layer(N, W, b)
+            return
+        self.layers = [None] * len(kwargs['shape'])
+        self.input_length = kwargs['input_length']
+        prevN = self.input_length 
+        for l in range(len(kwargs.shape)):
+            N = kwargs.shape[l] 
+            
+            W = self.init_weight_M(prevN, N)
+            b = self.init_bias_V(N)
 
-                prevN = N
-                self.layers[l] = Layer(W,b,z,a)
-"""
+            self.layers[l] = Layer(N, W, b)
+            prevN = N
+
     #INITS
     def init_weight_M(self, prevN, N):
         W = np.random.rand(N, prevN)
@@ -58,14 +42,6 @@ class Network:
     def init_bias_V(self, N):
         b = np.zeros(N, dtype=float)
         return b
-
-    def init_activation_V(self, N):
-        a = np.zeros(N, dtype=float)
-        return a
-
-    def init_z_V(self, N):
-        z = np.zeros(N, dtype=float)
-        return z
 
     def forward_prop(self, x): #takes input vector
         prev_a = x
@@ -170,10 +146,11 @@ class Network:
         layers = [None] * len(self.layers)
         for l in range(len(self.layers)):
             layers[l] = {
+                    'N': self.layers[l].N,
                     'W': self.layers[l].W.tolist(),
                     'b': self.layers[l].b.tolist()
                     }
-        json_obj = {input_length: self.input_length, shape: self.shape, layers: layers}
+        json_obj = {'input_length': self.input_length, 'learning_rate': self.learning_rate, 'layers': layers}
         with open(filename,'w') as f:
             json.dump(json_obj, f)
         print('network saved to file',filename)
@@ -188,7 +165,7 @@ class Network:
 
     def printNetwork(self):
         print('NETWORK')
-        print('learning rate',learning_rate)
-        print('shape',shape)
+        print('learning_rate',self.learning_rate)
+        print('input_length',self.input_length)
         for l in range(len(self.layers)):
             self.layers[l].printLayer()
