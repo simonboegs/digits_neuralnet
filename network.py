@@ -22,11 +22,12 @@ class Network:
                     b = np.asarray(layer['b'])
                     self.layers[l] = Layer(N, W, b)
             return
+        self.learning_rate = kwargs['learning_rate']
         self.layers = [None] * len(kwargs['shape'])
         self.input_length = kwargs['input_length']
         prevN = self.input_length 
-        for l in range(len(kwargs.shape)):
-            N = kwargs.shape[l] 
+        for l in range(len(kwargs['shape'])):
+            N = kwargs['shape'][l] 
             
             W = self.init_weight_M(prevN, N)
             b = self.init_bias_V(N)
@@ -36,7 +37,8 @@ class Network:
 
     #INITS
     def init_weight_M(self, prevN, N):
-        W = np.random.rand(N, prevN)
+        #W = np.random.rand(N, prevN)
+        W = np.random.normal(0, 1, (N, prevN))
         return W
 
     def init_bias_V(self, N):
@@ -55,7 +57,6 @@ class Network:
             else:   
                 layer.a = relu(layer.z)
             prev_a = layer.a
-            self.layers[i].printLayer()
 
     def calc_errors(self, y):
         errors = [None] * len(self.layers)
@@ -122,7 +123,6 @@ class Network:
             b_grads_mean[l] = np.divide(b_grads_total[l], len(x_V))
         
         self.update_weights_biases(W_grads_mean, b_grads_mean)
-        
         mean_cost = total_cost / len(x_V)
         return mean_cost
 
@@ -135,9 +135,8 @@ class Network:
         y_batches = np.array_split(y_V_all, batch_num)
         batch_mean_costs = []
         for i in range(epochs):
-            print("EPOCH", i)
             for j in range(len(x_batches)):
-                print("BATCH",j)
+                print("EPOCH",i,"BATCH",j)
                 batch_mean_cost = self.train_batch(x_batches[j], y_batches[j])
                 batch_mean_costs.append(batch_mean_cost) 
         return batch_mean_costs

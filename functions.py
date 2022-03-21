@@ -20,8 +20,8 @@ def softmax_niave(z):
     return e / e.sum()
 
 def softmax(z):
-    e = np.exp(z - np.max(z))
-    return e / np.sum(e)
+    e_v = np.exp(z - np.max(z))
+    return e_v / np.sum(e_v)
 
 def cross_entropy(a, y):
-    return -1 * np.dot(np.log(a), y)
+    return -1 * np.dot(np.log(a, where=0<a, out=np.zeros_like(a)), y)

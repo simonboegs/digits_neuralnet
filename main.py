@@ -11,12 +11,15 @@ x_train, y_train = data.get_x_y_train()
 
 inputLen = len(x_train[0])
 shape = [16, 16, 10]
-network = Network(inputLen, shape)
-#for l in range(len(network.layers)):
-#    network.layers[l].printLayer()
-
-batch_costs = network.train(x_train, y_train, 1)
+network = Network(learning_rate=.2, input_length=inputLen, shape=shape)
+x_train_small = x_train[:100]
+y_train_small = y_train[:100]
+batch_costs = network.train(x_train, y_train, 20, batch_size=100)
 print(batch_costs)
+network.save('network_0.json')
+with open('train_latest.json','w') as f:
+    json.dump({'batch_costs': batch_costs}, f)
+    print('batch_costs saved')
 
 plt.plot(batch_costs)
 plt.show()

@@ -28,9 +28,11 @@ def test_relu_prime():
 
 def test_softmax():
     z = np.array([-2,-1,0,1,2], dtype=float)
-    ans = softmax(z)
+    #ans = softmax(z)
     ans_niave = softmax_niave(z)
-    print(ans, ans_niave)
+    z_2 = [4173.90897735, 2739.1410199, 3996.41795011, 3387.97098832, 3620.9226239, 3346.27827923, 3440.87792333, 3827.7254811, 3301.18525545, 3424.1326412] 
+    z_3 = [3.0,1.0,.2]
+    print(softmax(z_2))
 
 def test_cross_entropy():
     y = np.array([1, 0, 0])
