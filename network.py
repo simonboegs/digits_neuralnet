@@ -157,11 +157,16 @@ class Network:
     def test(self, x_V, y_V):
         if not self.valid_inputs(x_V, y_V):
             return
+        total_correct = 0.0
         for i in range(len(x_V)):
             self.forward_prop(x_V[i])
             a = self.layers[-1].a
-            cost = cross_entropy(a, y_V[i])
-
+            choice = a.argmax()
+            correct_choice = y_V[i].argmax()
+            if choice == correct_choice:
+                total_correct += 1
+        return total_correct / len(x_V)
+            
     def printNetwork(self):
         print('NETWORK')
         print('learning_rate',self.learning_rate)
