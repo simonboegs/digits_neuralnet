@@ -5,11 +5,14 @@ from functions import relu, relu_prime, softmax, cross_entropy
 
 class Network:
     def __init__(self, *layers, **kwargs):
+        #layers can be passed in as args, with learning_rate and input_length as kwargs
         if len(layers) != 0:
             self.learning_rate = kwargs['learning_rate']
             self.input_length = kwargs['input_length']
             self.layers = layers
             return
+        #filename can be passed in as lone element in kwargs
+        #will construct network from json file
         if 'filename' in kwargs:
             with open(kwargs['filename'], 'r') as f:
                 network_data = json.load(f)
@@ -22,6 +25,11 @@ class Network:
                     b = np.asarray(layer['b'])
                     self.layers[l] = Layer(N, W, b)
             return
+        #default way to construct network, from scratch
+        #kwargs include
+            # learning rate
+            # input_length - length of input array
+            # shape - [N0, N1, N2] each element is amount of neurons in each layer. first entry is first hidden layer, last entry is output layer
         self.learning_rate = kwargs['learning_rate']
         self.layers = [None] * len(kwargs['shape'])
         self.input_length = kwargs['input_length']
@@ -35,7 +43,6 @@ class Network:
             self.layers[l] = Layer(N, W, b)
             prevN = N
 
-    #INITS
     def init_weight_M(self, prevN, N):
         #W = np.random.rand(N, prevN)
         W = np.random.normal(0, 1, (N, prevN))
@@ -45,6 +52,7 @@ class Network:
         b = np.zeros(N, dtype=float)
         return b
 
+    #peforms forward prop on layers in self.layers. edits z and a vectors in each layer object.
     def forward_prop(self, x): #takes input vector
         prev_a = x
         for i in range(len(self.layers)):
@@ -58,6 +66,8 @@ class Network:
                 layer.a = relu(layer.z)
             prev_a = layer.a
 
+    #calculates deltas for each layer.
+    #returns 2d array, each entry is a layer's errors
     def calc_errors(self, y):
         errors = [None] * len(self.layers)
         errors[-1] = self.layers[-1].a - y
@@ -65,6 +75,8 @@ class Network:
             errors[i] = np.multiply(relu_prime(self.layers[i].z), np.matmul(np.transpose(self.layers[i+1].W), errors[i+1]))
         return errors
 
+    #calculates gradient
+    #returns 
     def calc_gradients(self, x, y):
         errors = self.calc_errors(y)
         b_grads = [None] * len(errors)
